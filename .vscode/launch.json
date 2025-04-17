@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/target/debug/transactions",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--",
+                "test.csv"
+            ],
+            "initCommands": [
+                "break set -n rust_panic"
+            ],
+            "preLaunchTask": "build-debug"
+        },
+        {
+            "name": "Release",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/target/release/transactions",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--",
+                "test.csv"
+            ],
+            "initCommands": [
+                "break set -n rust_panic"
+            ],
+            "preLaunchTask": "build-release"
+        },
+    ]
+}

@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-debug",
+      "type": "shell",
+      "command": "cargo",
+      "args": [
+        "build"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true,
+      }
+    },
+    {
+      "label": "build-release",
+      "type": "shell",
+      "command": "cargo",
+      "args": [
+        "build",
+        "--release"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true,
+      }
+    },
+  ]
+}
