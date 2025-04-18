@@ -74,18 +74,42 @@ fn main() -> Result<()> {
     let args = Args::parse();
     let file = File::open(&args.filename)?;
 
-    let mut clients = HashMap::<u16, ClientData>::new();
-    let mut deposits = HashMap::<u32, Transaction>::new();
-    let mut disputed = HashSet::<u32>::new();
-
-    // The reader needs to allow for whitespace and missing columns.
+    // Allow for whitespace and missing columns.
     let mut reader = ReaderBuilder::new()
         .trim(csv::Trim::All)
         .flexible(true)
         .from_reader(file);
+    let txs = reader
+        .deserialize::<Transaction>()
+        .map(|r| r.map_err(Into::into));
+
+    // Process the transactions.
+    let clients = process(txs)?;
+
+    // Print the client data to stdout..
+    println!("client,available,held,total,locked");
+
+    for (id, client) in &clients {
+        println!(
+            "{},{:.4},{:.4},{:.4},{}",
+            id, client.available, client.held, client.total, client.locked
+        );
+    }
+
+    Ok(())
+}
+
+/// Processes transactions.
+fn process<T>(txs: T) -> Result<HashMap<u16, ClientData>>
+where
+    T: IntoIterator<Item = Result<Transaction>>
+{
+    let mut clients = HashMap::<u16, ClientData>::new();
+    let mut deposits = HashMap::<u32, Transaction>::new();
+    let mut disputed = HashSet::<u32>::new();
 
     // Read line by line to minimize our memory footprint.
-    for tx in reader.deserialize() {
+    for tx in txs {
         let tx: Transaction = tx?;
 
         // Verify the transaction.
@@ -187,15 +211,5 @@ fn main() -> Result<()> {
         }
     }
 
-    // Print the client data to stdout..
-    println!("client,available,held,total,locked");
-
-    for (id, client) in &clients {
-        println!(
-            "{},{:.4},{:.4},{:.4},{}",
-            id, client.available, client.held, client.total, client.locked
-        );
-    }
-
-    Ok(())
+    Ok(clients)
 }
