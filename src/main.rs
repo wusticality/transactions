@@ -44,7 +44,7 @@ struct Transaction {
 }
 
 impl Transaction {
-    /// Makes sure the transactions are well-formed.
+    /// Makes sure transactions are well-formed.
     fn verify(&self) -> Result<()> {
         match self.kind {
             TransactionType::Deposit | TransactionType::Withdrawal => {
@@ -164,7 +164,7 @@ where
 
                 // Only allow the dispute if we have available funds.
                 // This was unclear in the spec, but it aligns with
-                // what I'd expect from a bank.
+                // what I'd expect from a bank in the real world.
                 if client.available < value.amount.unwrap() {
                     continue;
                 }
